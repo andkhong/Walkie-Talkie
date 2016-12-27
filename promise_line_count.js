@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const get_file_line_count = (pathToFile) => {
+const promise_line_count = (pathToFile) => {
   let line_count = 0;
   return new Promise( (resolve, reject) => {
     fs.createReadStream(pathToFile)
@@ -14,4 +14,4 @@ const get_file_line_count = (pathToFile) => {
   });
 };
 
-module.exports = get_file_line_count;
+module.exports = promise_line_count;

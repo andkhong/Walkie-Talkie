@@ -4,31 +4,28 @@ const path = require('path');
 const async = require('async');
 
 // Import Helper Files/Functions
-const get_file_line_count = require('./get_file_line_count.js');
+const promise_line_count = require('./promise_line_count.js');
 const config = require('./line-count.config.js');
 
 const get_dir_line_count = (dir) => {
   let total_lines = 0;
   let file_count = 0, async_ext_file_count = 0;
   fs.readdir(dir, (err, dir_contents) => {
-
+    // Start Async
     async.each(dir_contents, (file, next) => {
       const file_path = dir + '/' + file;
       fs.stat(file_path, (err, stat) => {
         // Avoids hidden files and heavily optimizes performance
         if(err || file[0] === '.') return next(err);
 
-        if(stat.isDirectory()){
-          // Fix to allow Config
-          if(file !== config.exclude[0]) get_dir_line_count(file_path);
-        }
+        if(stat.isDirectory() && file !== config.exclude[0]) get_dir_line_count(file_path);
 
         else if(stat.isFile()){
           let extension = path.extname(file_path);
           for(var i = 0; i < config.extensions.length; i++){
             if(config.extensions[i] === extension){
               async_ext_file_count++;
-              get_file_line_count(file_path)
+              promise_line_count(file_path)
                 .then( (result) => {
                   total_lines += result;
                   file_count += 1;
@@ -38,9 +35,10 @@ const get_dir_line_count = (dir) => {
             }
           }
         };
+
       });
     });
-
+    // End Async
   });
 };
 
