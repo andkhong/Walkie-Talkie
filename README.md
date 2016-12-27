@@ -1,7 +1,14 @@
+### How To Run
+1. git clone
+2. NPM install
+3. type in node line-count.js {directory name relative to Walkie Talkie's path}
+4. Happy Coding!!
+
+### Example
+1. node line-count.js Walkie-Talkie
+
 ### TODO
-1. Resolve folder path finding
-2. Add functions that can read files and get line count
-  - Fix variable scope issues
-  - Use Asyncronous FS methods
-  - Use Promises
-3. Build efficient recursive functions that can walk throw large directory
+1. Modularize & Clean code
+2. Fix config incorporation
+3. Test to confirm if script works well with Windows OS
+4. Build into npm module
