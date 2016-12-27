@@ -8,7 +8,7 @@ const get_file_line_count = require('./get_file_line_count.js');
 const config = require('./line-count.config.js');
 
 const get_dir_line_count = (dir) => {
-  let total = 0;
+  let total_lines = 0;
   let file_count = 0, async_ext_file_count = 0;
   fs.readdir(dir, (err, dir_contents) => {
 
@@ -28,12 +28,13 @@ const get_dir_line_count = (dir) => {
           for(var i = 0; i < config.extensions.length; i++){
             if(config.extensions[i] === extension){
               async_ext_file_count++;
-              return get_file_line_count(file_path)
+              get_file_line_count(file_path)
                 .then( (result) => {
-                  total += result;
+                  total_lines += result;
                   file_count += 1;
-                  if(async_ext_file_count === file_count) output_log(dir, file_count, total);
+                  if(async_ext_file_count === file_count) output_log(dir, file_count, total_lines);
               });
+              break;
             }
           }
         };
@@ -43,8 +44,8 @@ const get_dir_line_count = (dir) => {
   });
 };
 
-const output_log = (dir, file_count, total) => {
-  console.log(dir + '/', '=', file_count, 'files,', total,'lines');
+const output_log = (dir, file_count, total_lines) => {
+  console.log(dir + '/', '=', file_count, 'files,', total_lines,'lines');
 }
 
 module.exports = get_dir_line_count;
