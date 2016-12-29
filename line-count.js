@@ -74,9 +74,11 @@ function get_dir_line_count(dir) {
             // recursive count its files and lines and add it to the overall output
             return get_dir_line_count(file_path)
               .then((recursive_output) => {
-                output.file_count += recursive_output.file_count;
-                output.file_lines += recursive_output.file_count;
-              });
+                if(recursive_output){
+                  output.file_count += recursive_output.file_count;
+                  output.file_lines += recursive_output.file_lines;
+                }
+              })
           } else {
             // count the lines for the current file path and then update the overall output
             return count_lines(file_path)
@@ -89,10 +91,11 @@ function get_dir_line_count(dir) {
       ))
     // this last chain makes sure we wait for the promise to resolve
     // and populate the output object before resolving with it
-  ).then( () =>
-  console.log(output.path, '=', output.file_count, 'files,', output.file_lines, 'lines'));
+  ).then( () => {
+    console.log(output.path, '=', output.file_count, 'files,', output.file_lines, 'lines');
+    return output;
+  })
 }
 
 const directory = process.argv[2];
 get_dir_line_count('./../' + directory)
-  .then(console.log)
