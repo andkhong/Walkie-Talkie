@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const config = require('./line-count.config.js');
 
 // resolves with the file names within the given directory
 function get_file_names(dir) {
@@ -54,7 +55,7 @@ function get_dir_line_count(dir) {
     // filter all file names that start with a '.' or include the string 'node_modules'
     .then((names) =>
       names.filter((name) =>
-        !name.startsWith('.') && !name.includes('node_modules')
+        !name.startsWith('.') && !name.includes(config.exclude[0])
       )
     )
     // map every file name into a promise that resolves with the type for that file name within the given dir
@@ -81,11 +82,18 @@ function get_dir_line_count(dir) {
               })
           } else {
             // count the lines for the current file path and then update the overall output
-            return count_lines(file_path)
-              .then((file_lines) => {
-                output.file_lines += file_lines;
-                output.file_count += 1;
-              })
+            /// Modularize this section
+            let file_path_ext = path.extname(file_path);
+            for(var i = 0; i < config.extensions.length; i++){
+              if(file_path_ext === config.extensions[i]){
+                return count_lines(file_path)
+                  .then((file_lines) => {
+                    output.file_lines += file_lines;
+                    output.file_count += 1;
+                  })
+              }
+            }
+            ////
           }
         })
       ))

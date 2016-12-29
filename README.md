@@ -12,6 +12,3 @@
 2. Fix config incorporation
 3. Test to confirm if script works well with Windows OS
 4. Build into npm module
-
-### Bugs
-1. Does not log first layer, it logs an unhandled promise error
