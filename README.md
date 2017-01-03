@@ -10,5 +10,4 @@
 ### TODO
 1. Modularize & Clean code
 2. Fix config incorporation
-3. Test to confirm if script works well with Windows OS
-4. Build into npm module
+3. Build into npm module

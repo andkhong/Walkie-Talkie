@@ -20,7 +20,7 @@ function getPathAndType(filePath){
       if (err) return reject(err);
       if (!stat.isDirectory() && !stat.isFile()) reject('Invalid Type');
       // If directory has config file labled line.config.js, reassign config
-      if(filePath.endsWith('line.config.js')) config = require(path.resolve('..', filePath));      
+      if(filePath.endsWith('lineCount.config.js')) config = require(filePath);
       const type = stat.isDirectory() ? 'dir' : 'file';
       resolve({
         filePath,
@@ -36,9 +36,9 @@ function countFileLines(filePath){
     let lineCount = 0;
     fs.createReadStream(filePath)
       .on("data", (buffer) => {
-        buffer.forEach((chunk) => {
-          if (chunk === 10) lineCount++;
-        });
+        for (i = 0; i < buffer.length; ++i) {
+          if (buffer[i] == 10) lineCount++;
+        }
       }).on("end", () => {
         resolve(lineCount);
       }).on("error", reject);
