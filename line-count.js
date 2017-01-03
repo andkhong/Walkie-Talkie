@@ -36,9 +36,12 @@ function countFileLines(filePath){
     let lineCount = 0;
     fs.createReadStream(filePath)
       .on("data", (buffer) => {
-        for (i = 0; i < buffer.length; ++i) {
-          if (buffer[i] == 10) lineCount++;
-        }
+        let idx = -1;
+        lineCount--; // Because the loop will run once for idx=-1
+        do {
+          idx = buffer.indexOf(10, idx+1);
+          lineCount++;
+        } while (idx !== -1);
       }).on("end", () => {
         resolve(lineCount);
       }).on("error", reject);
