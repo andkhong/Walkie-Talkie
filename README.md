@@ -1,11 +1,11 @@
 ### How To Run
 1. git clone
 2. NPM install
-3. type in node line-count.js {directory name relative to Walkie Talkie's path}
-4. Happy Coding!!
+3. run NPM LINK from Walkie-Talkie directory to enable lineCount
+5. Happy Coding!!
 
 ### Example
-1. node line-count.js Walkie-Talkie
+1. lineCount Walkie-Talkie
 
 ### TODO
 1. Modularize & Clean code

@@ -1,10 +1,11 @@
+#! /usr/bin/env node
 const fs = require('fs');
 const path = require('path');
 
-let config = require('./default.config.js');
+let config = require('./lineCount.config.js');
 
 // resolves with the file names within the given directory
-function getFileNames(dir){
+const getFileNames = (dir) => {
   return new Promise((resolve, reject) => {
     fs.readdir(dir, (err, fileNames) => {
       if (err) return reject(err);
@@ -14,13 +15,11 @@ function getFileNames(dir){
 };
 
 // resolves with an object containing the type ('file' or 'dir') for the given file path and the file path itself: { file_path, type }
-function getPathAndType(filePath){
+const getPathAndType = (filePath) => {
   return new Promise((resolve, reject) => {
     fs.stat(filePath, (err, stat) => {
       if (err) return reject(err);
       if (!stat.isDirectory() && !stat.isFile()) reject('Invalid Type');
-      // If directory has config file labled line.config.js, reassign config
-      if(filePath.endsWith('lineCount.config.js')) config = require(filePath);
       const type = stat.isDirectory() ? 'dir' : 'file';
       resolve({
         filePath,
@@ -31,7 +30,7 @@ function getPathAndType(filePath){
 };
 
 // same as before, counts lines for the given file path
-function countFileLines(filePath){
+const countFileLines = (filePath) => {
   return new Promise((resolve, reject) => {
     let lineCount = 0;
     fs.createReadStream(filePath)
@@ -48,14 +47,12 @@ function countFileLines(filePath){
   });
 };
 
-function getDirLineCount(dir){
-
+const getDirLineCount = (dir) => {
   const output = {
     file_count: 0,
     file_lines: 0,
     path: dir
   };
-
   // get all filenames in the given directory
   return getFileNames(dir)
     // filter out hidden files/directory
@@ -84,11 +81,8 @@ function getDirLineCount(dir){
             };
             return getDirLineCount(filePath)
               .then((recursive_output) => {
-                // if(recursive_output){
-                  output.file_count += recursive_output.file_count;
-                  output.file_lines += recursive_output.file_lines;
-                // }
-
+                output.file_count += recursive_output.file_count;
+                output.file_lines += recursive_output.file_lines;
               }).catch(console.error);
           } else {
             // count the lines for the current file path and then update the overall output
@@ -109,11 +103,15 @@ function getDirLineCount(dir){
     // and populate the output object before resolving with it
   ).then( () => {
     // Split & Pop performs better than Regex & is easier to maintain
-    console.log('\t', output.path.split('/').pop() + '/', '=', output.file_count, 'files,', output.file_lines, 'lines');
+    let data = output.path.split('/');
+    console.log('\t'.repeat(data.length-5), data.pop() + '/', output.file_count, 'files,', output.file_lines, 'lines');
     return output;
   }).catch(console.error);
 };
 
-const directory = path.resolve('..', process.argv[2]);
-getDirLineCount(directory)
-  .catch(console.error)
+const argv = require('minimist')(process.argv.slice(2));
+for(let i = 0; i < argv._.length; i++){
+  let directory = path.resolve('', argv._[i]);
+  getDirLineCount(directory)
+    .catch(console.error);
+}

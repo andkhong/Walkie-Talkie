@@ -1,13 +1,17 @@
 {
   "name": "walkie-talkie",
   "version": "1.0.0",
-  "description": "Node Recursive Asynchronous Directory line count",
-  "main": "line-count.js",
+  "description": "Directory Walker",
+  "main": "lineCount.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
+  "bin": {
+    "lineCount": "node lineCount.js"
+  },
   "dependencies": {
+    "minimist": "^1.2.0"
   }
 }

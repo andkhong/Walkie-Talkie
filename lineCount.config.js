@@ -1,7 +1,8 @@
 module.exports = {
   "exclude": [
       "node_modules",
-      "test/fixture"
+      "test",
+      "tests"
   ],
   "extensions": [
     ".js",
