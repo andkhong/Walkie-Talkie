@@ -11,3 +11,7 @@
 1. Modularize & Clean code
 2. Fix config incorporation
 3. Build into npm module
+
+### Early Versions
+1. If using early version, go to Walkie-Talkie and type NPM UNLINK
+2. run NPM LINK to fix issue

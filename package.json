@@ -2,14 +2,14 @@
   "name": "walkie-talkie",
   "version": "1.0.0",
   "description": "Directory Walker",
-  "main": "lineCount.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "An Khong",
   "license": "ISC",
   "bin": {
-    "lineCount": "node lineCount.js"
+    "lineCount": "index.js"
   },
   "dependencies": {
     "minimist": "^1.2.0"
