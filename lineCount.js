@@ -40,9 +40,9 @@ const countFileLines = (filePath) => {
           idx = buffer.indexOf(10, idx+1);
           lineCount++;
         } while (idx !== -1);
-      }).on("end", () => {
-        resolve(lineCount);
-      }).on("error", reject);
+      }).on("end", () =>
+        resolve(lineCount)
+      ).on("error", reject);
   });
 };
 
