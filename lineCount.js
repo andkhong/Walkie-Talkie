@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-let config = require('./lineCount.config.js');
-
 // resolves with the file names within the given directory
 const getFileNames = (dir) => {
   return new Promise( (resolve, reject) => {
@@ -46,11 +44,11 @@ const countFileLines = (filePath) => {
   });
 };
 
-const getDirLineCount = (dir) => {
+const getDirLineCount = (dir, config) => {
   const output = {
+    path: dir,
     file_count: 0,
     file_lines: 0,
-    path: dir,
     children: []
   };
   // get all filenames in the given directory
@@ -79,7 +77,7 @@ const getDirLineCount = (dir) => {
             for(let i = 0; i < config.exclude.length; i++){
               if (filePath.endsWith(config.exclude[i])) return;
             };
-            return getDirLineCount(filePath)
+            return getDirLineCount(filePath, config)
               .then( (recursive_output) => {
                 output.file_count += recursive_output.file_count;
                 output.file_lines += recursive_output.file_lines;
@@ -107,4 +105,4 @@ const getDirLineCount = (dir) => {
   }).catch(console.error);
 };
 
-module.exports = { getDirLineCount };
+module.exports = { getDirLineCount, getFileNames };

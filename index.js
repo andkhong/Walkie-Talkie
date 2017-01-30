@@ -1,21 +1,41 @@
 #! /usr/bin/env node
 const path = require('path');
-const lineCount = require('./lineCount.js');
 const argv = require('minimist')(process.argv.slice(2));
+const lineCount = require('./lineCount.js');
+let config = require('./lineCount.config.js');
 
 if(argv._.length <= 0){
-  lineCount.getDirLineCount(process.env.PWD)
+  lineCount.getDirLineCount(process.env.PWD, config)
     .then( (result) =>
       displayTreeDFS(result, print)
     ).catch(console.error);
+
 } else {
   for(let i = 0; i < argv._.length; i++){
-    let directory = path.resolve('', argv._[i]);
-    lineCount.getDirLineCount(directory)
-      .then( (result) =>
-        displayTreeDFS(result, print)
-      ).catch(console.error);
+    lineCount.getFileNames(argv._[i])
+      .then( (contents) =>
+        setConfig(contents)
+          .then( (config) => {
+            let directory = path.resolve('', argv._[i]);
+            lineCount.getDirLineCount(directory, config)
+              .then( (result) =>
+                displayTreeDFS(result, print)
+              ).catch(console.error);
+          })
+      );
   }
+}
+
+const setConfig = (array) => {
+  return new Promise( (resolve, reject) => {
+    if (array.includes('lineCount.config.js')){
+      let config = require(path.resolve(argv._[0], 'lineCount.config.js'));
+      resolve(config);
+    } else {
+      let config = require('./lineCount.config.js');
+      resolve(config);
+    }
+  })
 }
 
 const displayTreeDFS = (tree, callback) => {
@@ -31,6 +51,7 @@ const displayTreeDFS = (tree, callback) => {
   }
 }
 
+// Optimize performance?
 const print = (object) => {
   const data = object.path.split('/');
   if(data.length < 5) return;
