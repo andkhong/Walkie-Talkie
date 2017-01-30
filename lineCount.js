@@ -104,4 +104,4 @@ const getDirLineCount = (dir, config) => {
   });
 };
 
-module.exports = { getDirLineCount, getFileNames };
+module.exports = { getDirLineCount };

@@ -37,16 +37,13 @@ const print = (object) => {
 }
 
 const getContent = (dir) => {
-  lineCount.getFileNames(dir)
-    .then( (contents) =>
-      setConfig(dir)
-        .then( (config) => {
-          lineCount.getDirLineCount(dir, config)
-            .then( (result) =>
-              displayTreeDFS(result, print)
-            )
-        })
-    );
+  setConfig(dir)
+    .then( (config) => {
+      lineCount.getDirLineCount(dir, config)
+        .then( (result) =>
+          displayTreeDFS(result, print)
+        )
+    });
 }
 
 if(argv._.length <= 0){
