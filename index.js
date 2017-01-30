@@ -1,43 +1,17 @@
 #! /usr/bin/env node
+
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
+
 const lineCount = require('./lineCount.js');
 let config = require('./lineCount.config.js');
 
-if(argv._.length <= 0){
-  const directory = process.env.PWD;
-  lineCount.getFileNames(directory)
-    .then( (contents) =>
-      setConfig(contents, directory)
-        .then( (config) => {
-          lineCount.getDirLineCount(directory, config)
-            .then( (result) =>
-              displayTreeDFS(result, print)
-            ).catch(console.error);
-        })
-    );
-} else {
-  for(let i = 0; i < argv._.length; i++){
-    const directory = path.resolve('', argv._[i]);
-    lineCount.getFileNames(directory)
-      .then( (contents) =>
-        setConfig(contents, directory)
-          .then( (config) => {
-            lineCount.getDirLineCount(directory, config)
-              .then( (result) =>
-                displayTreeDFS(result, print)
-              ).catch(console.error);
-          })
-      );
-  }
-}
-
-const setConfig = (array, directory) => {
+const setConfig = (dir) => {
   return new Promise( (resolve, reject) => {
-    if (array.includes('lineCount.config.js')){
-      const config = require(path.resolve(directory, 'lineCount.config.js'));
+    try {
+      const config = require(path.join(dir, 'lineCount.config.js'));
       resolve(config);
-    } else {
+    } catch (e) {
       const config = require('./lineCount.config.js');
       resolve(config);
     }
@@ -57,9 +31,30 @@ const displayTreeDFS = (tree, callback) => {
   }
 }
 
-// Optimize performance?
 const print = (object) => {
-  const data = object.path.split('/');
-  if(data.length < 5) return;
-  else console.log('\t'.repeat(data.length-5), data.pop() + '/', object.file_count, 'files,', object.file_lines, 'lines');
+  const data = object.path.split(path.sep);
+  console.log('  '.repeat(data.length), data.pop() + path.sep, object.file_count, 'files,', object.file_lines, 'lines');
+}
+
+const getContent = (dir) => {
+  lineCount.getFileNames(dir)
+    .then( (contents) =>
+      setConfig(dir)
+        .then( (config) => {
+          lineCount.getDirLineCount(dir, config)
+            .then( (result) =>
+              displayTreeDFS(result, print)
+            )
+        })
+    );
+}
+
+if(argv._.length <= 0){
+  const directory = process.env.PWD;
+  getContent(directory)
+} else {
+  for(let i = 0; i < argv._.length; i++){
+    const directory = path.resolve('', argv._[i]);
+    getContent(directory);
+  }
 }

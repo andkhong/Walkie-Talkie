@@ -58,12 +58,11 @@ const getDirLineCount = (dir, config) => {
       names.filter((name) =>
         !name.startsWith('.')
       )
-    ).catch(console.error)
+    )
     // map every file name into a promise that resolves with the type for that file name within the given dir
     .then( (names) =>
       names.map((name) =>
         getPathAndType(path.join(dir, name))
-          .catch(console.warn) // log invalid typed files if necessary
       )
     ).then( (pathsAndTypesPromises) =>
       Promise.all(pathsAndTypesPromises.map( (promise) =>
@@ -82,7 +81,7 @@ const getDirLineCount = (dir, config) => {
                 output.file_count += recursive_output.file_count;
                 output.file_lines += recursive_output.file_lines;
                 output.children.push(recursive_output);
-              }).catch(console.error);
+              });
           } else {
             // count the lines for the current file path and then update the overall output
             let filePathExt = path.extname(filePath);
@@ -92,7 +91,7 @@ const getDirLineCount = (dir, config) => {
                   .then((fileLines) => {
                     output.file_lines += fileLines;
                     output.file_count += 1;
-                  }).catch(console.error);
+                  });
               };
             };
           };
@@ -102,7 +101,7 @@ const getDirLineCount = (dir, config) => {
     // and populate the output object before resolving with it
   ).then( () => {
     return output;
-  }).catch(console.error);
+  });
 };
 
 module.exports = { getDirLineCount, getFileNames };
