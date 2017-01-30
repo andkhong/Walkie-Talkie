@@ -5,18 +5,24 @@ const lineCount = require('./lineCount.js');
 let config = require('./lineCount.config.js');
 
 if(argv._.length <= 0){
-  lineCount.getDirLineCount(process.env.PWD, config)
-    .then( (result) =>
-      displayTreeDFS(result, print)
-    ).catch(console.error);
-
+  const directory = process.env.PWD;
+  lineCount.getFileNames(directory)
+    .then( (contents) =>
+      setConfig(contents, directory)
+        .then( (config) => {
+          lineCount.getDirLineCount(directory, config)
+            .then( (result) =>
+              displayTreeDFS(result, print)
+            ).catch(console.error);
+        })
+    );
 } else {
   for(let i = 0; i < argv._.length; i++){
-    lineCount.getFileNames(argv._[i])
+    const directory = path.resolve('', argv._[i]);
+    lineCount.getFileNames(directory)
       .then( (contents) =>
-        setConfig(contents)
+        setConfig(contents, directory)
           .then( (config) => {
-            let directory = path.resolve('', argv._[i]);
             lineCount.getDirLineCount(directory, config)
               .then( (result) =>
                 displayTreeDFS(result, print)
@@ -26,13 +32,13 @@ if(argv._.length <= 0){
   }
 }
 
-const setConfig = (array) => {
+const setConfig = (array, directory) => {
   return new Promise( (resolve, reject) => {
     if (array.includes('lineCount.config.js')){
-      let config = require(path.resolve(argv._[0], 'lineCount.config.js'));
+      const config = require(path.resolve(directory, 'lineCount.config.js'));
       resolve(config);
     } else {
-      let config = require('./lineCount.config.js');
+      const config = require('./lineCount.config.js');
       resolve(config);
     }
   })
