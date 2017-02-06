@@ -4,7 +4,6 @@ const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
 const lineCount = require('./lineCount.js');
-let config = require('./lineCount.config.js');
 
 const setConfig = (dir) => {
   return new Promise( (resolve, reject) => {
@@ -15,7 +14,7 @@ const setConfig = (dir) => {
       const config = require('./lineCount.config.js');
       resolve(config);
     }
-  })
+  });
 }
 
 const displayTreeDFS = (tree, callback) => {
@@ -42,7 +41,10 @@ const getContent = (dir) => {
       lineCount.getDirLineCount(dir, config)
         .then( (result) =>
           displayTreeDFS(result, print)
-        )
+        ).catch( (err) => {
+          // Log Error from promise chain in lineCount function
+          return err;
+        })
     });
 }
 
