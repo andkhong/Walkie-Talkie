@@ -11,6 +11,7 @@ const setConfig = (dir) => {
       const config = require(path.join(dir, 'lineCount.config.js'));
       resolve(config);
     } catch (e) {
+      console.log(dir, 'does not have config')
       const config = require('./lineCount.config.js');
       resolve(config);
     }
@@ -19,11 +20,15 @@ const setConfig = (dir) => {
 
 const displayTreeDFS = (tree, callback) => {
   let stack = [tree];
+  stack[0].level = 0;
+
   while(stack.length > 0){
     let item = stack.pop();
+    item.level++;
     callback(item);
     if (item.children){
       for(let i = 0; i < item.children.length; i++){
+        item.children[i].level = item.level;
         stack.push(item.children[i]);
       }
     } else continue;
@@ -32,7 +37,7 @@ const displayTreeDFS = (tree, callback) => {
 
 const print = (object) => {
   const data = object.path.split(path.sep);
-  console.log('  '.repeat(data.length), data.pop() + path.sep, object.file_count, 'files,', object.file_lines, 'lines');
+  console.log(' '.repeat(object.level), data.pop() + path.sep, object.file_count, 'files,', object.file_lines, 'lines');
 }
 
 const getContent = (dir) => {
@@ -42,8 +47,7 @@ const getContent = (dir) => {
         .then( (result) =>
           displayTreeDFS(result, print)
         ).catch( (err) => {
-          // Log Error from promise chain in lineCount function
-          return err;
+          console.log(err);
         })
     });
 }

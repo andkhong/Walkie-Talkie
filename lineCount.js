@@ -5,7 +5,7 @@ const path = require('path');
 const getFileNames = (dir) => {
   return new Promise( (resolve, reject) => {
     fs.readdir(dir, (err, fileNames) => {
-      if (err) return reject("Unable to read directory:", dir);
+      if (err) reject("Unable to read directory:", dir);
       resolve(fileNames);
     });
   });
@@ -15,7 +15,7 @@ const getFileNames = (dir) => {
 const getPathAndType = (filePath) => {
   return new Promise( (resolve, reject) => {
     fs.stat(filePath, (err, stat) => {
-      if (err) return reject(err);
+      if (err) reject("Unable to get path type!");
       if (!stat.isDirectory() && !stat.isFile()) return reject('Not file or directory! Invalid Path:', filePath);
       const type = stat.isDirectory() ? 'dir' : 'file';
       resolve({
